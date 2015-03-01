@@ -63,6 +63,7 @@ public interface ComConstants {
 	public static final String PIN    = "<pin>";
 	public static final String VALUE  = "<value>";
 	public              String QUOTEt = "\"";
+	public String VALUEt = "value:\"";
 	String msgCHAT = "{message_type:\"chat\",sender_type:\"android\",value:\"<value>\",target_id:\"android\"}";
 	public static final String CHAT_token = "message_type:\"chat\"";
 

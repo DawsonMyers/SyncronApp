@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="background_color">#fff</color>
+	<color name="black">#111</color>
+	<color name="green">#1cba48</color>
+	<color name="blue">#0073b9</color>
+	<color name="gray">#ff5a5b5f</color>
+	<color name="white">#fff</color>
+	<color name="blue_highlight">#990073b9</color>
+
+	<color name="textColor">#FFF</color>
+	<color name="textFieldColor">#000</color>
+	<color name="textShadow">#FFF</color>
+	<color name="listViewBg">#DADFEE</color>
+
+	<color name="sendLightColor">#8897BF</color>
+	<color name="sendMeduimColor">#5D6CA5</color>
+	<color name="sendDarkColor">#515F9F</color>
+
+	<color name="barDarkColor">#CECECE</color>
+	<color name="barMeduimColor">#DFDEE0</color>
+	<color name="barLightColor">#F2F2F2</color>
+</resources>

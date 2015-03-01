@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+import ca.syncron.app.chat.ChatActivity;
 import ca.syncron.app.service.SyncronService;
 
 import java.util.concurrent.ExecutorService;
@@ -14,14 +15,14 @@ import java.util.concurrent.ScheduledExecutorService;
  * Created by Dawson on 2/27/2015.
  */
 public class Syncron extends Application {
-	public SyncronService mService = null;
-	public Context        syncronContext;
-//	public Handler                  mHandler  = new Handler();
-	public ExecutorService          executor  = Executors.newCachedThreadPool();
-	public ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
-	// ///////////////////////////////////////////////////////////////////////////////////
-
 	private static Syncron syncron;// = new Syncron();
+	public SyncronService mService = null;
+	public Context syncronContext;
+	//	public Handler                  mHandler  = new Handler();
+	public ExecutorService          executor  = Executors.newCachedThreadPool();
+	// ///////////////////////////////////////////////////////////////////////////////////
+	public ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+	public ChatActivity chat;
 
 	//	access with: Syncron controller = Syncron.getSingletonInstance();
 	public Syncron() {
@@ -33,11 +34,13 @@ public class Syncron extends Application {
 		//ExecutorService cachedPool = Executors.newCachedThreadPool();
 
 	}
-	public void toast(String msg) {
-		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-	}
+
 	public synchronized static Syncron getInstance() {
 		return syncron;
+	}
+
+	public void toast(String msg) {
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 
 	public synchronized void setServiceRef(SyncronService service){
@@ -69,6 +72,10 @@ public class Syncron extends Application {
 		mService = SyncronService.getInstance();
 		//	mService.testConnect();
 		mService.setPin(pin, value);
+	}
+
+	public void sendChatMessage(String msg) {
+		mService.sendChatMessage(msg);
 	}
 
 }

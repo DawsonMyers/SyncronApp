@@ -1,5 +1,6 @@
 package ca.syncron.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -7,12 +8,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import ca.syncron.app.chat.ChatActivity;
 import ca.syncron.app.system.Syncron;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
-	public Syncron app = null; //(Syncron) getApplicationContext();
+	public static String p1 = "2", p2 = "3", p3 = "4", p4 = "5";
+	public static boolean[] val = new boolean[4];
+	public        Syncron   app = null;
+	//app = (Syncron) getApplicationContext();
+	//(Syncron) getApplicationContext();
 	Button       btn1 = null;
 	Button       btn2 = null;
 	Button       btn3 = null;
@@ -49,7 +55,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 	}
 
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -72,9 +77,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		return super.onOptionsItemSelected(item);
 	}
 
-	public static String p1 = "2", p2 = "3", p3 = "4", p4 = "5";
-	public static boolean[] val = new boolean[4];
-
 	/**
 	 * Called when a view has been clicked.
 	 *
@@ -95,7 +97,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 				app.setPine(p3, pin(2));
 				break;
 			case R.id.b4:
-				app.setPine(p4, pin(3));
+				//app.setPine(p4, pin(3));
+				startActivity(new Intent(MainActivity.this, ChatActivity.class));
+//				ChatActivity chatActivity = new ChatActivity();
+//				chatActivity.start(this);
 				break;
 			default:
 				break;

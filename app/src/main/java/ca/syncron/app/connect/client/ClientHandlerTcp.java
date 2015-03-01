@@ -87,6 +87,8 @@ public class ClientHandlerTcp extends  AbstractHandler {
 	@Override
 	public void handleChatMessage(ClientMsg msg) {
 
+		System.out.println(msg.getStringValue());
+
 		client.mService.chatReceived(msg.getStringValue());
 	}
 

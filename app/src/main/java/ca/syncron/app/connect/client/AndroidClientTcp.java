@@ -20,22 +20,23 @@ import java.net.InetSocketAddress;
 
 /**
  * @author Dawson
- *
  */
 public class AndroidClientTcp extends Thread implements SocketObserver, ComConstants {
 	public final static Logger log = LoggerFactory.getLogger(AndroidClientTcp.class.getName());
-	public EventMachine mEventMachine;
-	public static       boolean          isConnected     = false;
+	public static final String  msgDIGITAL_TEMP = "{message_type: \"digital\",sender_type:\"android\",value:\"<value>\",pin:\"<pin>\",target_id:\"node\"}";
+	public static final String  PIN             = "<pin>";
+	public static final String  VALUE           = "<value>";
+	public static final String  ipLocal         = "192.168.1.109";
+	public static final int     port            = 6500;
+	public static       boolean isConnected     = false;
 	public static NIOSocket socket;
 	public static       AndroidClientTcp mClient         = null;
 	public static       SyncronService   mService        = null;
+	public EventMachine mEventMachine;
 	public              ClientHandlerTcp handler         = null;
 	public String host = IP_SERVER;//IP_LOCAL;
-	public static final String           msgDIGITAL_TEMP = "{message_type: \"digital\",sender_type:\"android\",value:\"<value>\",pin:\"<pin>\",target_id:\"node\"}";
-	public static final String           PIN             = "<pin>";
-	public static final String           VALUE           = "<value>";
-	public static final String ipLocal = "192.168.1.109";
 	String id = this.getClass().getSimpleName();
+
 	//Log.d(id,"sleeping");
 	//  {message_type: "digital",sender_type:"node",value:"0",pin:"3",target_id:"android"}
 	//  "{message_type: \"digital\",sender_type:\"android\",value:\"<value>\",pin:\"<pin>\",target_id:\"node\"}"
@@ -48,12 +49,6 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 		Log.d(id, "constructor");
 	}
 
-	public void init(EventMachine machine) {
-		mEventMachine = machine;
-		mClient = this;
-		handler = new ClientHandlerTcp();
-	}
-
 	public AndroidClientTcp(EventMachine machine) {
 		mEventMachine = machine;
 		mClient = this;
@@ -62,14 +57,19 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 
 	public static AndroidClientTcp getInstance() {return mClient;}
 
+	public void init(EventMachine machine) {
+		mEventMachine = machine;
+		mClient = this;
+		handler = new ClientHandlerTcp();
+	}
 
 	@Override
 	public void run() {
 		//public static void main(String[] args) {
-		int port = 6500;// Integer.parseInt(args[0]);
+//		int port = 6500;// Integer.parseInt(args[0]);
 		InetSocketAddress address = new InetSocketAddress(host, port);
 		try {
-			Log.d(id,"Run()");
+			Log.d(id, "Run()");
 			EventMachine machine = new EventMachine();
 			// InetAddress ip = InetAddress.getByName(HTTP_SERVER);
 			InetAddress ip = InetAddress.getByName(ipLocal);
@@ -84,12 +84,11 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 	}
 
 
-
 	@Override
 	public void connectionOpened(NIOSocket nioSocket) {
 		log.info("Connected to server");
 		setConnected(true);
-		Log.d(id,"Connected");
+		Log.d(id, "Connected");
 		mService.toast("Connected to server");
 	}
 
@@ -98,7 +97,7 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 		log.info("Disconnected from server");
 		setConnected(false);
 		mService.toast("Disconnected from server");
-		Log.d(id,"Disconnected");
+		Log.d(id, "Disconnected");
 	}
 
 	@Override
@@ -116,6 +115,14 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 		//System.out.println(testMsg);
 		//sendMessage("{message_type:\"digital\",sender_type:\"node\",value:\"TEST FROM NODE\",target_id:\"android\"}");
 
+		if (isJsonMsg(message) && message.contains(CHAT_token)) {
+			//mService.
+			String chatMsg = extract(message, VALUEt);
+			System.out.println("Chat message received:" + "\n" + chatMsg);
+			mService.chatReceived(chatMsg);
+			return;
+		}
+
 		handler.addToQue(message);
 	}
 
@@ -128,11 +135,35 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 	public void sendMessage(String msg) {
 		socket.write(msg.getBytes());
 	}
+
 	public void sendDigitalMessage(String pin, String value) {
 		String msg = msgDIGITAL_TEMP.replace(PIN, pin).replace(VALUE, value);
-		mService.toast("Sending message: \n" + msg);
+		//mService.toast("Sending message: \n" + msg);
 		Log.e(id, msg);
-		socket.write(msg.getBytes());
+		if (socket != null && socket.isOpen()) {
+			socket.write(msg.getBytes());
+		} else {
+			connect();
+
+		}
+		//socket.write(msg.getBytes());
+	}
+
+	private void connect() {
+		try {
+			Log.d(id, "Reconnecting");
+			//EventMachine machine = new EventMachine();
+			// InetAddress ip = InetAddress.getByName(HTTP_SERVER);
+			InetAddress ip = InetAddress.getByName(ipLocal);
+			if (mEventMachine == null) mEventMachine = new EventMachine();
+			socket = mEventMachine.getNIOService().openSocket(ip, port);
+			socket.listen(this);
+			socket.setPacketReader(new AsciiLinePacketReader());
+			socket.setPacketWriter(new AsciiLinePacketWriter());
+			mEventMachine.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String extract(String msg, String token) {
@@ -154,11 +185,19 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 		}
 		return false;
 	}
+
+	public boolean isConnected() {
+		return isConnected;
+	}
+
 	public void setConnected(boolean b) {
 		isConnected = b;
 	}
 
-	public boolean isConnected() {
-		return isConnected;
+	public void sendChatMessage(String msg) {
+		if (msg != null) {
+			msg = msgCHAT.replace(VALUE, msg);
+			sendMessage(msg);
+		}
 	}
 }

@@ -19,17 +19,18 @@ import java.util.concurrent.Executors;
 
 public class SyncronService extends Service {
 
-	public Syncron app;// = (Syncron) getApplicationContext();
-	Boolean updateUI = false;
-	Handler handler;
+	public static String           user     = "Dawson";
 	public static AndroidClientTcp client   = null;
 	public static SyncronService   mService = null;
-	public        ExecutorService  executor = Executors.newCachedThreadPool();
+	public Syncron app;// = (Syncron) getApplicationContext();
+	public ExecutorService executor = Executors.newCachedThreadPool();
+	//public MyReceiver mMyReceiver = new MyReceiver();
+	public boolean serviceRunning;
+	Boolean updateUI = false;
+	Handler handler;
 	Thread            updateUIThread;
 	IntentFilter      filter;
 	BroadcastReceiver updateUIReciver;
-	//public MyReceiver mMyReceiver = new MyReceiver();
-	public boolean serviceRunning;
 	String id = this.getClass().getSimpleName();
 	//Log.d(id,"sleeping");
 	public SyncronService() {
@@ -84,7 +85,16 @@ public class SyncronService extends Service {
 
 	//  Chat Callback
 	public void chatReceived(String strMsg) {
-		toast(strMsg);
+		//int i = strMsg.indexOf(":");
+		String[] s = strMsg.split(":");
+		strMsg = s[0] + ":\n" + s[1];
+		final String msg = strMsg;
+		toast(msg);
+		if (msg.length() == 0) return;
+		app = Syncron.getInstance();
+		app.chat.update(strMsg);
+		//app.chat.handler.post(()-> app.chat.addNewMessage(new Message(strMsg, false)));
+
 	}
 
 	public void connected() {
@@ -102,5 +112,10 @@ public class SyncronService extends Service {
 				e.printStackTrace();
 			}
 		}).start();
+	}
+
+	public void sendChatMessage(String msg) {
+		msg = user + ":" + msg;
+		client.sendChatMessage(msg);
 	}
 }

@@ -25,4 +25,21 @@ public class ClientMsg extends MsgMetaData implements ComConstants {
 		parseJsonToMap();
 	}
 
+	public String getChat() {
+		return extract(value, VALUEt);
+	}
+
+	public String extract(String msg, String token) {
+		String value = "";
+//		if (msg != null & token != null) {
+//			int i1 = msg.indexOf(token);
+//			int i2 = msg.indexOf(QUOTEt, i1 + token.length());
+//			if(i1>i2) return "EXTRACT_ERROR";
+//			value = msg.substring(i1 + token.length(), i2);
+//			return value;
+//		}
+		return "EXTRACT_ERROR";
+	}
+
+
 }
