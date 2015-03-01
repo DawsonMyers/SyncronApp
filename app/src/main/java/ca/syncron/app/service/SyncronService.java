@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 import ca.syncron.app.connect.client.AndroidClientTcp;
 import ca.syncron.app.system.Syncron;
@@ -32,16 +33,16 @@ public class SyncronService extends Service {
 		app = Syncron.getInstance();
 		app.setServiceRef(this);
 		Toast.makeText(app, "Service Started", Toast.LENGTH_LONG).show();
-//		executor.execute(() -> {
-//			try {
-//				Log.d(id,"sleeping");
-//				Thread.sleep(1500);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			Log.d(id,"done sleeping");
-//			(client = new AndroidClientTcp(this)).start();
-//		});
+		executor.execute(() -> {
+			try {
+				Log.d(id, "sleeping");
+				Thread.sleep(1500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			Log.d(id, "done sleeping");
+			(client = new AndroidClientTcp(this)).start();
+		});
 		mService = this;
 	}
 
@@ -70,7 +71,7 @@ public class SyncronService extends Service {
 		if (pin == "2") {
 			(client = new AndroidClientTcp(this)).start();
 		}
-		//client.sendDigitalMessage(pin, value? "1" : "0");
+		client.sendDigitalMessage(pin, value ? "1" : "0");
 	//executor.execute(() -> client.sendDigitalMessage(pin, value? "1" : "0"));
 		String m = value ? "ON" : "OFF";//"Pin #"+ pin;
 		m += " set to ";
