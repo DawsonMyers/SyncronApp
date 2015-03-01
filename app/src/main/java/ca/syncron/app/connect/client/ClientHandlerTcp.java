@@ -5,6 +5,8 @@ package ca.syncron.app.connect.client;
 
 
 import ca.syncron.app.connect.utils.MessageBuffer;
+import ca.syncron.app.service.SyncronService;
+import ca.syncron.app.system.Syncron;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,13 +16,16 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ClientHandlerTcp extends  AbstractHandler {
-	public final static Logger                                 log      = LoggerFactory.getLogger(ClientHandlerTcp.class.getName());
-	public static       Receiver                               receiver = null;
-	public static       Sender                                 sender   = null;
+	public final static Logger         log      = LoggerFactory.getLogger(ClientHandlerTcp.class.getName());
+	public static       Receiver       receiver = null;
+	public static       Sender         sender   = null;
 	public static       AndroidClientTcp client   = null;
+	public              Syncron        app      = null;
+	public              SyncronService service  = null;
 
 	public ClientHandlerTcp() {
 		client = AndroidClientTcp.getInstance();
+
 		startMsgHandlers();
 	}
 
@@ -78,6 +83,12 @@ public class ClientHandlerTcp extends  AbstractHandler {
 
 	@Override
 	public void handleUserMessage(ClientMsg msg) {}
+
+	@Override
+	public void handleChatMessage(ClientMsg msg) {
+
+		client.mService.chatReceived(msg.getStringValue());
+	}
 
 	@Override
 	public void implementedMapConfig() {}

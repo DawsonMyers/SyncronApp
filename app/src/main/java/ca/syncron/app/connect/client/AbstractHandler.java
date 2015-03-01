@@ -92,6 +92,9 @@ public abstract class AbstractHandler   extends Thread implements ComConstants {
 				case tUSER:
 					handleUserMessage(msg);
 					break;
+				case tCHAT:
+					handleChatMessage(msg);
+					break;
 
 				default:
 					log.error("message could not be identified");
@@ -122,6 +125,8 @@ public abstract class AbstractHandler   extends Thread implements ComConstants {
 	public abstract void handleLoginMessage(ClientMsg msg);
 
 	public abstract void handleUserMessage(ClientMsg msg);
+
+	public abstract void handleChatMessage(ClientMsg msg);
 
 	public abstract void implementedMapConfig();
 

@@ -1,6 +1,7 @@
 package ca.syncron.app;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +42,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 	private void init() {
 
-		 android.os.Handler handler =   new android.os.Handler();
+		Handler handler = new Handler();
 		 handler.postDelayed(() ->app.startService(), 500);
 		//new Thread(() -> Toast.makeText(m,"Running in Thread",Toast.LENGTH_LONG).show()).start();
 		//Toast.makeText(this,"Trying",Toast.LENGTH_LONG).show();

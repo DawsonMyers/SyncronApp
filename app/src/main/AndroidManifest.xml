@@ -27,7 +27,7 @@
         </service>
         <service
             android:name=".service.SyncronService1"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="true" >
         </service>
     </application>

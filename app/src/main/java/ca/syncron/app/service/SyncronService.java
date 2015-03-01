@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 import ca.syncron.app.connect.client.AndroidClientTcp;
 import ca.syncron.app.system.Syncron;
@@ -16,7 +15,7 @@ import java.util.concurrent.Executors;
 
 public class SyncronService extends Service {
 
-	Syncron app;// = (Syncron) getApplicationContext();
+	public Syncron app;// = (Syncron) getApplicationContext();
 	Boolean updateUI = false;
 	Handler handler;
 	public static AndroidClientTcp client   = null;
@@ -33,16 +32,16 @@ public class SyncronService extends Service {
 		app = Syncron.getInstance();
 		app.setServiceRef(this);
 		Toast.makeText(app, "Service Started", Toast.LENGTH_LONG).show();
-		executor.execute(() -> {
-			try {
-				Log.d(id,"sleeping");
-				Thread.sleep(1500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			Log.d(id,"done sleeping");
-			(client = new AndroidClientTcp(this)).start();
-		});
+//		executor.execute(() -> {
+//			try {
+//				Log.d(id,"sleeping");
+//				Thread.sleep(1500);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//			Log.d(id,"done sleeping");
+//			(client = new AndroidClientTcp(this)).start();
+//		});
 		mService = this;
 	}
 
@@ -61,17 +60,30 @@ public class SyncronService extends Service {
 	}
 
 	public void toast(String msg) {
-		Toast.makeText(app, msg, Toast.LENGTH_SHORT).show();
+		app = Syncron.getInstance();
+		//Toast.makeText(app, msg, Toast.LENGTH_SHORT).show();
 	}
 
 	public void setPin(String pin, Boolean value) {
 //		client = new AndroidClientTcp(this);
 //		client.start();
-		client.sendDigitalMessage(pin, value? "1" : "0");
+		if (pin == "2") {
+			(client = new AndroidClientTcp(this)).start();
+		}
+		//client.sendDigitalMessage(pin, value? "1" : "0");
 	//executor.execute(() -> client.sendDigitalMessage(pin, value? "1" : "0"));
-		String m = "Pin #"+ pin;
+		String m = value ? "ON" : "OFF";//"Pin #"+ pin;
 		m += " set to ";
 		m += value? "ON" : "OFF";
-		toast(m);
+		//	toast(m);
+	}
+
+	//  Chat Callback
+	public void chatReceived(String strMsg) {
+		toast(strMsg);
+	}
+
+	public void connected() {
+		toast("Connected to server");
 	}
 }

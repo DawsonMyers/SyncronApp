@@ -21,7 +21,7 @@ public class Syncron extends Application {
 	public ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 	// ///////////////////////////////////////////////////////////////////////////////////
 
-	private static Syncron syncron = new Syncron();
+	private static Syncron syncron;// = new Syncron();
 
 	//	access with: Syncron controller = Syncron.getSingletonInstance();
 	public Syncron() {
