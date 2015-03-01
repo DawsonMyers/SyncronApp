@@ -67,6 +67,7 @@ public class Syncron extends Application {
 
 	public void setPine(String pin, boolean value) {
 		mService = SyncronService.getInstance();
+		//	mService.testConnect();
 		mService.setPin(pin, value);
 	}
 

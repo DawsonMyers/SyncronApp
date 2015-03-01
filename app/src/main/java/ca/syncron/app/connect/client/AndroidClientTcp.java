@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -33,6 +34,7 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 	public static final String           msgDIGITAL_TEMP = "{message_type: \"digital\",sender_type:\"android\",value:\"<value>\",pin:\"<pin>\",target_id:\"node\"}";
 	public static final String           PIN             = "<pin>";
 	public static final String           VALUE           = "<value>";
+	public static final String ipLocal = "192.168.1.109";
 	String id = this.getClass().getSimpleName();
 	//Log.d(id,"sleeping");
 	//  {message_type: "digital",sender_type:"node",value:"0",pin:"3",target_id:"android"}
@@ -70,7 +72,8 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 			Log.d(id,"Run()");
 			EventMachine machine = new EventMachine();
 			// InetAddress ip = InetAddress.getByName(HTTP_SERVER);
-			socket = machine.getNIOService().openSocket(host, port);
+			InetAddress ip = InetAddress.getByName(ipLocal);
+			socket = machine.getNIOService().openSocket(ip, port);
 			socket.listen(new AndroidClientTcp(machine));
 			socket.setPacketReader(new AsciiLinePacketReader());
 			socket.setPacketWriter(new AsciiLinePacketWriter());
@@ -132,6 +135,25 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 		socket.write(msg.getBytes());
 	}
 
+	public String extract(String msg, String token) {
+		String value = "";
+		if (msg != null & token != null) {
+			int i1 = msg.indexOf(token);
+			int i2 = msg.indexOf(QUOTEt, i1 + token.length());
+			value = msg.substring(i1 + token.length(), i2);
+		}
+		return value;
+
+	}
+
+	// ///////////////////////////////////////////////////////////////////////////////////
+
+	public boolean isJsonMsg(String message) {
+		if (message.startsWith("{message_type:") & message.endsWith("}")) {
+			return true;
+		}
+		return false;
+	}
 	public void setConnected(boolean b) {
 		isConnected = b;
 	}

@@ -11,6 +11,9 @@ import android.widget.Toast;
 import ca.syncron.app.connect.client.AndroidClientTcp;
 import ca.syncron.app.system.Syncron;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,7 +72,7 @@ public class SyncronService extends Service {
 //		client = new AndroidClientTcp(this);
 //		client.start();
 		if (pin == "2") {
-			(client = new AndroidClientTcp(this)).start();
+			//(client = new AndroidClientTcp(this)).start();
 		}
 		client.sendDigitalMessage(pin, value ? "1" : "0");
 	//executor.execute(() -> client.sendDigitalMessage(pin, value? "1" : "0"));
@@ -86,5 +89,18 @@ public class SyncronService extends Service {
 
 	public void connected() {
 		toast("Connected to server");
+	}
+
+	public void testConnect() {
+		new Thread(() -> {
+			try {
+				InetAddress ip = InetAddress.getByName("192.168.1.109");
+				Socket socket = new Socket("localhost", 6500);
+				if (socket.isConnected()) Log.d("ConnectTest", "Connected to server");
+				else Log.d("ConnectTest", "Faild to connect");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 }
