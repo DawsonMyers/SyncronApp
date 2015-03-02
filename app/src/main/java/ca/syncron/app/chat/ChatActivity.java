@@ -37,6 +37,7 @@ public class ChatActivity extends ListActivity {
 		setContentView(R.layout.chat_activity);
 
 		app = (Syncron) getApplicationContext();
+		app.setRef(this);
 		app.chat = this;
 
 		text = (EditText) this.findViewById(R.id.text);

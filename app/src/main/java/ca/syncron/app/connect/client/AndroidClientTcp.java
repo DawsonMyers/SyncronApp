@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author Dawson
@@ -30,12 +32,17 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 	public static final int     port            = 6500;
 	public static       boolean isConnected     = false;
 	public static NIOSocket socket;
-	public static       AndroidClientTcp mClient         = null;
-	public static       SyncronService   mService        = null;
+	public static AndroidClientTcp mClient  = null;
+	public static SyncronService   mService = null;
 	public EventMachine mEventMachine;
-	public              ClientHandlerTcp handler         = null;
-	public String host = IP_SERVER;//IP_LOCAL;
+	public ClientHandlerTcp handler = null;
+	public String           host    = IP_SERVER;//IP_LOCAL;
 	String id = this.getClass().getSimpleName();
+
+	public static boolean isScheduled = false;
+
+	public static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();// = Executors.newFixedThreadPool(5);
+
 
 	//Log.d(id,"sleeping");
 	//  {message_type: "digital",sender_type:"node",value:"0",pin:"3",target_id:"android"}
@@ -47,6 +54,11 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 	public AndroidClientTcp(SyncronService syncronService) {
 		mService = syncronService;
 		Log.d(id, "constructor");
+		//private ScheduledExecutorService scheduler;
+		scheduler = Executors.newSingleThreadScheduledExecutor();
+		//scheduler.scheduleAtFixedRate(new SomeTask(), 0, 10, TimeUnit.MINUTES);
+
+
 	}
 
 	public AndroidClientTcp(EventMachine machine) {
@@ -65,22 +77,24 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 
 	@Override
 	public void run() {
+
+		connect();
 		//public static void main(String[] args) {
 //		int port = 6500;// Integer.parseInt(args[0]);
-		InetSocketAddress address = new InetSocketAddress(host, port);
-		try {
-			Log.d(id, "Run()");
-			EventMachine machine = new EventMachine();
-			// InetAddress ip = InetAddress.getByName(HTTP_SERVER);
-			InetAddress ip = InetAddress.getByName(ipLocal);
-			socket = machine.getNIOService().openSocket(ip, port);
-			socket.listen(new AndroidClientTcp(machine));
-			socket.setPacketReader(new AsciiLinePacketReader());
-			socket.setPacketWriter(new AsciiLinePacketWriter());
-			machine.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		InetSocketAddress address = new InetSocketAddress(host, port);
+//		try {
+//			Log.d(id, "Run()");
+//			EventMachine machine = new EventMachine();
+//			// InetAddress ip = InetAddress.getByName(HTTP_SERVER);
+//			InetAddress ip = InetAddress.getByName(ipLocal);
+//			socket = machine.getNIOService().openSocket(ip, port);
+//			socket.listen(new AndroidClientTcp(machine));
+//			socket.setPacketReader(new AsciiLinePacketReader());
+//			socket.setPacketWriter(new AsciiLinePacketWriter());
+//			machine.start();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 
@@ -98,6 +112,12 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 		setConnected(false);
 		mService.toast("Disconnected from server");
 		Log.d(id, "Disconnected");
+
+		mService.disconnected();
+
+		//scheduler.scheduleAtFixedRate(() -> connect(), 0, 5, TimeUnit.SECONDS);
+		//isScheduled = true;
+
 	}
 
 	@Override
@@ -150,17 +170,19 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 	}
 
 	private void connect() {
+		InetSocketAddress address = new InetSocketAddress(host, port);
 		try {
-			Log.d(id, "Reconnecting");
-			//EventMachine machine = new EventMachine();
+			Log.d(id, "Run()");
+			EventMachine machine = new EventMachine();
 			// InetAddress ip = InetAddress.getByName(HTTP_SERVER);
 			InetAddress ip = InetAddress.getByName(ipLocal);
-			if (mEventMachine == null) mEventMachine = new EventMachine();
-			socket = mEventMachine.getNIOService().openSocket(ip, port);
-			socket.listen(this);
+			socket = machine.getNIOService().openSocket(ip, port);
+			socket.listen(new AndroidClientTcp(machine));
 			socket.setPacketReader(new AsciiLinePacketReader());
 			socket.setPacketWriter(new AsciiLinePacketWriter());
-			mEventMachine.start();
+			machine.start();
+			if (socket.isOpen()) mService.mConnected = true;
+			//if(isScheduled && socket.isOpen()) scheduler.shutdown();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -192,6 +214,7 @@ public class AndroidClientTcp extends Thread implements SocketObserver, ComConst
 
 	public void setConnected(boolean b) {
 		isConnected = b;
+		mService.isConnected(b);
 	}
 
 	public void sendChatMessage(String msg) {

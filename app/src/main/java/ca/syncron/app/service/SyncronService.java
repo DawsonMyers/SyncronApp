@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class SyncronService extends Service {
 
@@ -32,6 +33,11 @@ public class SyncronService extends Service {
 	IntentFilter      filter;
 	BroadcastReceiver updateUIReciver;
 	String id = this.getClass().getSimpleName();
+	public volatile boolean mConnected    = false;
+	public volatile boolean mReconnecting = false;
+
+	public static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
 	//Log.d(id,"sleeping");
 	public SyncronService() {
 		app = Syncron.getInstance();
@@ -101,6 +107,16 @@ public class SyncronService extends Service {
 		toast("Connected to server");
 	}
 
+	public void isConnected(boolean con) {
+		mConnected = con;
+		//	Syncron.getInstance().updateConnectionStatus(con);
+		app.updateConnectionStatus(con);
+	}
+
+	public boolean isConnected() {
+		return mConnected;
+	}
+
 	public void testConnect() {
 		new Thread(() -> {
 			try {
@@ -117,5 +133,56 @@ public class SyncronService extends Service {
 	public void sendChatMessage(String msg) {
 		msg = user + ":" + msg;
 		client.sendChatMessage(msg);
+	}
+
+	public void disconnected() {
+		client = null;
+		System.out.println("trying to execute runnable");
+
+		//client.mEventMachine.shutdown();
+		//scheduler.scheduleAtFixedRate(() -> connect(), 0, 10, TimeUnit.SECONDS);
+		connect();
+	}
+
+	public int attempt = 0;
+
+	public void connect() {
+		System.out.println("Getting connect runnable");
+		if (mReconnecting) return;
+//		executor.execute(() ->  {
+		new Thread(() -> {
+
+//			if (isConnected()) {
+//				scheduler.shutdown();
+//			}else (client = new AndroidClientTcp(this)).start();
+			mReconnecting = true;
+			while (!isConnected()) {
+				Log.d(id, "mReconnecting " + mReconnecting);
+				System.out.println("TRYING TO RECONNECT - " + attempt);
+				try {
+					Thread.sleep(10 * 1000);
+					if (isConnected()) break;
+
+					System.out.println("Trying to start new client");
+					(client = new AndroidClientTcp(this)).start();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				attempt++;
+			}
+			attempt = 0;
+			mReconnecting = false;
+		}).start();
+//		executor.execute(() -> {
+//			try {
+//				Log.d(id, "sleeping");
+//				Thread.sleep(1500);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//			Log.d(id, "done sleeping");
+//			(client = new AndroidClientTcp(this)).start();
+//		});
+
 	}
 }

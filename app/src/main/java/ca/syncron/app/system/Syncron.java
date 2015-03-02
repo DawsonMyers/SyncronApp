@@ -1,9 +1,11 @@
 package ca.syncron.app.system;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+import ca.syncron.app.MainActivity;
 import ca.syncron.app.chat.ChatActivity;
 import ca.syncron.app.service.SyncronService;
 
@@ -23,6 +25,7 @@ public class Syncron extends Application {
 	// ///////////////////////////////////////////////////////////////////////////////////
 	public ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 	public ChatActivity chat;
+	public MainActivity main;
 
 	//	access with: Syncron controller = Syncron.getSingletonInstance();
 	public Syncron() {
@@ -78,4 +81,14 @@ public class Syncron extends Application {
 		mService.sendChatMessage(msg);
 	}
 
+	public void updateConnectionStatus(boolean con) {
+		main.updateStatus(con);
+	}
+
+	public void setRef(Activity activity) {
+		boolean b = true;
+		if (activity instanceof MainActivity) main = ((MainActivity) activity);
+		if (activity instanceof ChatActivity) chat = ((ChatActivity) activity);
+
+	}
 }
