@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/DigitalToggleRow"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:showDividers="middle"
+              android:divider="@android:drawable/divider_horizontal_bright"
+		>
+
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo1"
+				style="@style/DigitalRowText"
+				android:text="Digital output 1" />
+
+		<ToggleButton
+				android:id="@+id/do1"
+				style="@style/DigitalRowButton"
+				android:checked="true" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo2"
+				style="@style/DigitalRowText"
+				android:text="Digital output 2" />
+
+		<ToggleButton
+				android:id="@+id/do2"
+				style="@style/DigitalRowButton"
+				android:checked="true" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo3"
+				style="@style/DigitalRowText"
+				android:text="Digital output 3" />
+
+		<ToggleButton
+				android:id="@+id/do3"
+				style="@style/DigitalRowButton" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo4"
+				style="@style/DigitalRowText"
+				android:text="Digital output 4" />
+
+		<ToggleButton
+				android:id="@+id/do4"
+				style="@style/DigitalRowButton"
+				android:checked="true" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo5"
+				style="@style/DigitalRowText"
+				android:text="Digital output 5" />
+
+		<ToggleButton
+				android:id="@+id/do5"
+				style="@style/DigitalRowButton" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo6"
+				style="@style/DigitalRowText"
+				android:text="Digital output 6" />
+
+		<ToggleButton
+				android:id="@+id/do6"
+				style="@style/DigitalRowButton" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo7"
+				style="@style/DigitalRowText"
+				android:text="Digital output 7" />
+
+		<ToggleButton
+				android:id="@+id/do7"
+				style="@style/DigitalRowButton" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo8"
+				style="@style/DigitalRowText"
+				android:text="Digital output 8" />
+
+		<ToggleButton
+				android:id="@+id/do8"
+				style="@style/DigitalRowButton"
+				android:checked="true" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo9"
+				style="@style/DigitalRowText"
+				android:text="Digital output 9" />
+
+		<ToggleButton
+				android:id="@+id/do9"
+				style="@style/DigitalRowButton" />
+	</LinearLayout>
+
+	<LinearLayout
+			style="@style/DigitalRow">
+
+		<TextView
+				android:id="@+id/tvdo10"
+				style="@style/DigitalRowText"
+				android:text="Digital output 10" />
+
+		<ToggleButton
+				android:id="@+id/do10"
+				style="@style/DigitalRowButton" />
+	</LinearLayout>
+
+</LinearLayout>
